@@ -39,12 +39,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
-            steps {
-                echo '🔨 Building the Hello World project...'
-                sh 'echo "Hello World build successful!" > build.log'
-            }
-        }
+       stage('Build') {
+    steps {
+        echo '🔨 Building Hello World project...'
+        sh 'echo "Hello World build successful!" > build.log'
+    }
+}
+
 
         stage('Test') {
             steps {
