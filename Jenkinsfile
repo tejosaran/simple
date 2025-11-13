@@ -41,7 +41,6 @@ pipeline {
                 sh """
                 cp hello.html ${DEPLOY_PATH}/hello.html
                 chmod 644 ${DEPLOY_PATH}/hello.html
-                systemctl reload nginx
                 echo "✅ hello.html deployed to ${DEPLOY_PATH} and Nginx reloaded"
                 """
             }
