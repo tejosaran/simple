@@ -15,7 +15,7 @@ pipeline {
                 sh 'sudo rm -rf /var/www/html/*'
 
                 // Copy the new index.html file
-                sh 'sudo cp index.html /var/www/html/'
+                sh 'sudo cp hello.html /var/www/html/'
 
                 // Restart Nginx
                 sh 'sudo systemctl restart nginx'
