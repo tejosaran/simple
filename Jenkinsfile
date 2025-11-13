@@ -20,6 +20,6 @@ pipeline {
                 // Restart Nginx
                 sh 'sudo systemctl restart nginx'
             }
-        }
-    }
+        }
+    }
 }
