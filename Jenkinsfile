@@ -4,22 +4,20 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                echo 'Cloning repository...'
-                git 'https://github.com/tejosaran/simple.git'
+                echo 'Repository already checked out by Jenkins SCM.'
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building application...'
-                // You can add build commands here if needed
+                // Example build steps if needed
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // Copy files to web server directory (example for Ubuntu)
                 sh 'sudo cp -r * /var/www/html/'
             }
         }
