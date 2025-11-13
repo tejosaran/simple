@@ -39,10 +39,9 @@ pipeline {
             steps {
                 echo "🚀 Deploying project to ${DEPLOY_PATH}..."
                 sh """
-                sudo cp hello.html ${DEPLOY_PATH}/hello.html
-                sudo chown www-data:www-data ${DEPLOY_PATH}/hello.html
-                sudo chmod 644 ${DEPLOY_PATH}/hello.html
-                sudo systemctl reload nginx
+                cp hello.html ${DEPLOY_PATH}/hello.html
+                chmod 644 ${DEPLOY_PATH}/hello.html
+                systemctl reload nginx
                 echo "✅ hello.html deployed to ${DEPLOY_PATH} and Nginx reloaded"
                 """
             }
