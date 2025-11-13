@@ -1,62 +1,39 @@
-// pipeline {
-//     agent any
-
-//     stages {
-//         stage('Build') {
-//             steps {
-//                 echo '🔨 Building the Hello World project...'
-//                 // Example: simulate build process
-//                 sh 'echo "Hello World build successful!" > build.log'
-//             }
-//         }
-
-//         stage('Test') {
-//             steps {
-//                 echo '🧪 Running tests...'
-//                 // Example: check if build.log exists and contains text
-//                 sh '''
-//                 if [ -f build.log ] && grep -q "successful" build.log; then
-//                     echo "✅ Test passed!"
-//                 else
-//                     echo "❌ Test failed!"
-//                     exit 1
-//                 fi
-//                 '''
-//             }
-//         }
-//     }
-
-//     post {
-//         success {
-//             echo '🎉 Build and Test completed successfully!'
-//         }
-//         failure {
-//             echo '❌ Build or Test failed. Check the logs above.'
-//         }
-//     }
-// }
-
 pipeline {
     agent any
 
+    environment {
+        // Path where your web files should be deployed
+        DEPLOY_PATH = "/var/www/html"
+        // GitHub repo URL
+        REPO_URL = "https://github.com/tejosaran/simple.git"
+    }
+
     stages {
+        stage('Checkout') {
+            steps {
+                echo "🔄 Pulling code from GitHub..."
+                git url: "${REPO_URL}", branch: 'main'
+            }
+        }
+
         stage('Build') {
             steps {
-                echo '🔨 Building Hello World project...'
-                // Create the Hello World HTML page
-                sh 'echo "<h1>Hello World from Jenkins!</h1>" > build.log'
+                echo "🔨 Building project..."
+                // For HTML, build could be just verifying files exist
+                sh 'ls -l hello.html'
             }
         }
 
         stage('Test') {
             steps {
-                echo '🧪 Running tests...'
+                echo "🧪 Testing project..."
+                // Simple test: check if hello.html exists
                 sh '''
-                if [ -f build.log ] && grep -q "Hello World" build.log; then
-                    echo "✅ Test passed!"
-                else
-                    echo "❌ Test failed!"
+                if [ ! -f hello.html ]; then
+                    echo "ERROR: hello.html not found!"
                     exit 1
+                else
+                    echo "✅ hello.html exists"
                 fi
                 '''
             }
@@ -64,37 +41,22 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo '🚀 Deploying to Nginx...'
-                sh '''
-                # Install Nginx if not installed
-                if ! command -v nginx >/dev/null 2>&1; then
-                    sudo apt update
-                    sudo apt install -y nginx
-                fi
-
-                # Start and enable Nginx service
-                sudo systemctl start nginx
-                sudo systemctl enable nginx
-
-                # Deploy the page
-                sudo mv build.log /var/www/html/index.html
-
-                # Optional: set proper permissions
-                sudo chown www-data:www-data /var/www/html/index.html
-                sudo chmod 644 /var/www/html/index.html
-
-                echo "✅ Deployment completed!"
-                '''
+                echo "🚀 Deploying project..."
+                // Copy hello.html to deploy folder
+                sh """
+                cp hello.html ${DEPLOY_PATH}/hello.html
+                echo "✅ Deployed to ${DEPLOY_PATH}"
+                """
             }
         }
     }
 
     post {
         success {
-            echo '🎉 Build, Test, and Deploy completed successfully!'
+            echo "🎉 Pipeline completed successfully!"
         }
         failure {
-            echo '❌ Build/Test/Deploy failed. Check the logs above.'
+            echo "❌ Pipeline failed!"
         }
     }
 }
