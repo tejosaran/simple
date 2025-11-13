@@ -2,24 +2,36 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
-            steps {
-                echo 'Repository already checked out by Jenkins SCM.'
-            }
-        }
-
         stage('Build') {
             steps {
-                echo 'Building application...'
-                // Example build steps if needed
+                echo '🔨 Building the Hello World project...'
+                // Example: simulate build process
+                sh 'echo "Hello World build successful!" > build.log'
             }
         }
 
-        stage('Deploy') {
+        stage('Test') {
             steps {
-                echo 'Deploying application...'
-                sh 'sudo cp -r * /var/www/html/'
+                echo '🧪 Running tests...'
+                // Example: check if build.log exists and contains text
+                sh '''
+                if [ -f build.log ] && grep -q "successful" build.log; then
+                    echo "✅ Test passed!"
+                else
+                    echo "❌ Test failed!"
+                    exit 1
+                fi
+                '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Build and Test completed successfully!'
+        }
+        failure {
+            echo '❌ Build or Test failed. Check the logs above.'
         }
     }
 }
