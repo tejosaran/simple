@@ -1,58 +1,25 @@
 pipeline {
     agent any
 
-    environment {
-        REPO_URL = "https://github.com/tejosaran/simple.git"
-        DEPLOY_PATH = "/var/www/html"
-    }
-
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                echo "🔄 Pulling code from GitHub..."
-                git url: "${REPO_URL}", branch: 'main'
+                git branch: 'main', url: 'https://github.com/tejosaran/simple.git'
             }
         }
 
-        stage('Build') {
+        stage('Deploy to Nginx') {
             steps {
-                echo "🔨 Building project..."
-                sh 'ls -l hello.html'
-            }
-        }
+                // Remove old HTML files
+                sh 'sudo rm -rf /var/www/html/*'
 
-        stage('Test') {
-            steps {
-                echo "🧪 Testing project..."
-                sh '''
-                if [ ! -f hello.html ]; then
-                    echo "ERROR: hello.html not found!"
-                    exit 1
-                else
-                    echo "✅ hello.html exists"
-                fi
-                '''
-            }
-        }
+                // Copy the new index.html file
+                sh 'sudo cp index.html /var/www/html/'
 
-        stage('Deploy') {
-            steps {
-                echo "🚀 Deploying project to ${DEPLOY_PATH}..."
-                sh """
-                cp hello.html ${DEPLOY_PATH}/hello.html
-                chmod 644 ${DEPLOY_PATH}/hello.html
-                echo "✅ hello.html deployed to ${DEPLOY_PATH} and Nginx reloaded"
-                """
+                // Restart Nginx
+                sh 'sudo systemctl restart nginx'
             }
-        }
-    }
-
-    post {
-        success {
-            echo "🎉 Pipeline completed successfully!"
-        }
-        failure {
-            echo "❌ Pipeline failed!"
-        }
-    }
+        }
+    }
 }
